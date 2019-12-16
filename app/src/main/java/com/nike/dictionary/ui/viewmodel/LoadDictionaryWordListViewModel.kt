@@ -20,19 +20,16 @@ class LoadDictionaryWordListViewModel : MainViewModel() {
     private lateinit var subscription: Disposable
     val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
     val errorMessage: MutableLiveData<Int> = MutableLiveData()
-    val errorClickListener = View.OnClickListener { loadWordLists(searchTerm = "home") }
+    val errorClickListener = View.OnClickListener { loadWordLists(searchTerm = "") }
     val wordListAdapter: WordListAdapter = WordListAdapter()
 
-//    init {
-//        loadWordLists()
-//    }
 
     override fun onCleared() {
         super.onCleared()
         subscription.dispose()
     }
 
-     fun loadWordLists(searchTerm: String) {
+    fun loadWordLists(searchTerm: String) {
         subscription = dictionaryAPI
             .searchWordFromDictionary(searchTerm)
             .subscribeOn(Schedulers.io())
@@ -41,6 +38,19 @@ class LoadDictionaryWordListViewModel : MainViewModel() {
             .doOnTerminate { onRetrieveWordListFinish() }
             .subscribe(
                 { result -> onRetrieveWordListSuccess(result) },
+                { onRetrieveWordListError() }
+            )
+    }
+
+    fun sortWordListByThumbsUpOrDown(searchTerm: String, thumbsUpOrDown: String) {
+        subscription = dictionaryAPI
+            .searchWordFromDictionary(searchTerm)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { onRetrieveWordListStart() }
+            .doOnTerminate { onRetrieveWordListFinish() }
+            .subscribe(
+                { result -> onSortWordListSuccess(result, thumbsUpOrDown) },
                 { onRetrieveWordListError() }
             )
     }
@@ -56,6 +66,14 @@ class LoadDictionaryWordListViewModel : MainViewModel() {
     private fun onRetrieveWordListSuccess(response: Response<WordsResponse>) {
         val wordList: List<WordsListItem?> = response.body()?.list ?: emptyList()
         wordListAdapter.updatePostList(wordList as List<WordsListItem>)
+    }
+
+    private fun onSortWordListSuccess(response: Response<WordsResponse>, thumbsUpOrDown: String) {
+        val wordList: List<WordsListItem?> = response.body()?.list ?: emptyList()
+        wordListAdapter.sortWordListByThumbsUpOrDown(
+            wordList as List<WordsListItem>,
+            thumbsUpOrDown
+        )
     }
 
     private fun onRetrieveWordListError() {

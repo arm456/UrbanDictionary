@@ -18,14 +18,9 @@ import com.nike.dictionary.R
 
 
 class HomeFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = HomeFragment()
-    }
-
     private lateinit var binding: ActivityWordsListBinding
     private lateinit var viewModel: LoadDictionaryWordListViewModel
-    private var errorSnackbar: Snackbar? = null
+    private var errorSnackBar: Snackbar? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,18 +31,43 @@ class HomeFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        configureBindingAndViewModelValues()
+    }
+
+    private fun configureBindingAndViewModelValues() {
+//        Used Android Data Binding to access elements of XML
         binding = DataBindingUtil.setContentView(requireActivity(), R.layout.activity_words_list)
-        binding.wordsList.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
+        binding.wordsList.layoutManager =
+            LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
+        binding.switchLikesVsDisLikes.setOnCheckedChangeListener { _, isChecked ->
+            configureSortingByThumbsUpOrDown(isChecked)
+        }
+        configureSearchViewForDynamicStringSearch()
 
         viewModel = ViewModelProviders.of(this).get(LoadDictionaryWordListViewModel::class.java)
-        configureSearchViewForDynamicStringSearch()
-        viewModel.errorMessage.observe(this, Observer {
-                errorMessage -> if(errorMessage != null) showError(errorMessage) else hideError()
+        viewModel.errorMessage.observe(this, Observer { errorMessage ->
+            if (errorMessage != null) showError(errorMessage) else hideError()
         })
         binding.viewModel = viewModel
     }
 
-    private fun configureSearchViewForDynamicStringSearch(){
+
+    private fun configureSortingByThumbsUpOrDown(isChecked: Boolean) {
+//    Assumed switch isChecked to SortBy Thumbs Up Count and vice versa
+        if (isChecked) {
+            viewModel.sortWordListByThumbsUpOrDown(
+                binding.search.query.toString(),
+                R.string.thumbs_up.toString()
+            )
+        } else {
+            viewModel.sortWordListByThumbsUpOrDown(
+                binding.search.query.toString(),
+                R.string.thumbs_down.toString()
+            )
+        }
+    }
+
+    private fun configureSearchViewForDynamicStringSearch() {
         binding.search.isActivated = true
         binding.search.queryHint = getString(R.string.query_hint)
         binding.search.onActionViewExpanded()
@@ -57,23 +77,27 @@ class HomeFragment : Fragment() {
         binding.search.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
+                viewModel.loadWordLists(query)
                 return false
             }
 
             override fun onQueryTextChange(searchTerm: String): Boolean {
-                viewModel.loadWordLists(searchTerm)
                 return false
             }
         })
     }
-    private fun showError(@StringRes errorMessage:Int){
-        errorSnackbar = Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_INDEFINITE)
-        errorSnackbar?.setAction(R.string.retry, viewModel.errorClickListener)
-        errorSnackbar?.show()
+
+    private fun showError(@StringRes errorMessage: Int) {
+        errorSnackBar = Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_INDEFINITE)
+        errorSnackBar?.setAction(R.string.retry, viewModel.errorClickListener)
+        errorSnackBar?.show()
     }
 
-    private fun hideError(){
-        errorSnackbar?.dismiss()
+    private fun hideError() {
+        errorSnackBar?.dismiss()
     }
 
+    companion object {
+        fun newInstance() = HomeFragment()
+    }
 }

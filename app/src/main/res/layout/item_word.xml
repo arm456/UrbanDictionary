@@ -7,6 +7,7 @@
         <variable
             name="viewModel"
             type="com.nike.dictionary.ui.viewmodel.DictionaryWordViewModel" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -58,8 +59,8 @@
             android:layout_marginRight="32dp"
             android:paddingTop="8dp"
             android:src="@drawable/ic_thumb_down_red_24dp"
-            app:layout_constraintEnd_toStartOf="@+id/thumbs_down_count"
             app:layout_constraintBottom_toBottomOf="@+id/post_title"
+            app:layout_constraintEnd_toStartOf="@+id/thumbs_down_count"
             app:layout_constraintStart_toEndOf="@+id/thumbs_up_count"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,8 +71,8 @@
             android:layout_marginLeft="32dp"
             android:layout_marginRight="32dp"
             android:paddingTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/post_title"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:mutableInt="@{viewModel.getThumbsDownCount()}" />
 
