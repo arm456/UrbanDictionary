@@ -12,6 +12,6 @@ data class WordsListItem(
 	val current_vote: String? = null,
 	val writtenOn: String? = null,
 	val example: String? = null,
-	val thumbsDown: Int? = null
+	val thumbs_down: Int? = null
 )
 
