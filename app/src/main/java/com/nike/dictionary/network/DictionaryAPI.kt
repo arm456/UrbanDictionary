@@ -11,6 +11,6 @@ interface DictionaryAPI {
     @GET("/define")
     fun searchWordFromDictionary(
         @Query("term") searchTerm: String
-    ): Observable<Response<WordsResponse>>
+    ): Observable<WordsResponse>
 
 }
