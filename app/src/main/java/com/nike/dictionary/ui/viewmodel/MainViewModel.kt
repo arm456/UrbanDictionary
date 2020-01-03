@@ -21,7 +21,7 @@ abstract class MainViewModel : ViewModel() {
      */
     private fun inject() {
         when (this) {
-            is LoadDictionaryWordListViewModel -> injector.inject(this)
+            is SearchWordInDictionaryViewModel -> injector.inject(this)
         }
     }
 }

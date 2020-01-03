@@ -1,7 +1,7 @@
 package com.nike.dictionary.dagger.component
 
 import com.nike.dictionary.dagger.module.NetworkModule
-import com.nike.dictionary.ui.viewmodel.LoadDictionaryWordListViewModel
+import com.nike.dictionary.ui.viewmodel.SearchWordInDictionaryViewModel
 import dagger.Component
 import javax.inject.Singleton
 
@@ -12,10 +12,10 @@ import javax.inject.Singleton
 @Component(modules = [(NetworkModule::class)])
 interface AppComponent {
     /**
-     * Injects required dependencies into the specified LoadDictionaryWordListViewModel.
-     * @param loadDictionaryWordListViewModel LoadDictionaryWordListViewModel in which to inject the dependencies
+     * Injects required dependencies into the specified SearchWordInDictionaryViewModel.
+     * @param searchWordInDictionaryViewModel SearchWordInDictionaryViewModel in which to inject the dependencies
      */
-    fun inject(loadDictionaryWordListViewModel: LoadDictionaryWordListViewModel)
+    fun inject(searchWordInDictionaryViewModel: SearchWordInDictionaryViewModel)
 
     @Component.Builder
     interface Builder {

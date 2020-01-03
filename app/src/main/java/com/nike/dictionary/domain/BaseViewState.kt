@@ -1,13 +1,9 @@
 package com.nike.dictionary.domain
 
-open class BaseViewState<T> {
-    var data: T
-        get() {
-            TODO()
-        }
-        set(value) {}
+open class BaseViewState<WordsResponse> {
 
-    lateinit var error: Throwable
+    var data: WordsResponse? = null
+    var error: Throwable? = null
     var currentState: Int = 0
 
     enum class State constructor(var value: Int) {

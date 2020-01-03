@@ -10,12 +10,12 @@ import com.nike.dictionary.ui.main.WordListAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import retrofit2.Response
 import javax.inject.Inject
 import com.nike.dictionary.domain.WordsListViewState
 
 
-class LoadDictionaryWordListViewModel : MainViewModel() {
+class SearchWordInDictionaryViewModel : MainViewModel() {
+
     @Inject
     lateinit var dictionaryAPI: DictionaryAPI
     private lateinit var subscription: Disposable
@@ -24,6 +24,7 @@ class LoadDictionaryWordListViewModel : MainViewModel() {
     val errorMessage: MutableLiveData<Int> = MutableLiveData()
     val errorClickListener = View.OnClickListener { loadWordLists(searchTerm = "") }
     val wordListAdapter: WordListAdapter = WordListAdapter()
+
 
     fun getWordsListState(): MutableLiveData<WordsListViewState> {
         return wordsListViewState
@@ -42,7 +43,6 @@ class LoadDictionaryWordListViewModel : MainViewModel() {
             .doOnSubscribe { onRetrieveWordListStart() }
             .doOnTerminate { onRetrieveWordListFinish() }
             .subscribe(
-//                { result -> onRetrieveWordListSuccess(result) },
                 { result -> onRetrieveWordListSuccess(result) },
                 { error -> onRetrieveWordListError(error) }
             )
@@ -56,7 +56,6 @@ class LoadDictionaryWordListViewModel : MainViewModel() {
             .doOnSubscribe { onRetrieveWordListStart() }
             .doOnTerminate { onRetrieveWordListFinish() }
             .subscribe(
-//                { result -> onSortWordListSuccess(result, thumbsUpOrDown) },
                 { result -> onSortWordListSuccess(result, thumbsUpOrDown) },
                 { error -> onRetrieveWordListError(error) }
             )
@@ -65,34 +64,33 @@ class LoadDictionaryWordListViewModel : MainViewModel() {
     private fun onRetrieveWordListStart() {
         wordsListViewState.postValue(WordsListViewState.LOADING_STATE)
         loadingVisibility.value = View.VISIBLE
+
+        if (WordsListViewState.SUCCESS_STATE.data != null)
+            wordsListViewState.postValue(WordsListViewState.SUCCESS_STATE)
+        if (WordsListViewState.ERROR_STATE.error != null)
+            wordsListViewState.postValue(WordsListViewState.ERROR_STATE)
+
     }
 
     private fun onRetrieveWordListFinish() {
         loadingVisibility.value = View.GONE
     }
 
-//    private fun onRetrieveWordListSuccess(response: Response<WordsResponse>) {
     private fun onRetrieveWordListSuccess(response: WordsResponse) {
-//        val wordList: List<WordsListItem?> = response.body()?.list ?: emptyList()
         val wordList: List<WordsListItem?> = response.list
         wordListAdapter.updatePostList(wordList as List<WordsListItem>)
 
-//        WordsListViewState.SUCCESS_STATE.data = response.body()!!
         WordsListViewState.SUCCESS_STATE.data = response
-        wordsListViewState.postValue(WordsListViewState.SUCCESS_STATE)
     }
 
-//    private fun onSortWordListSuccess(response: Response<WordsResponse>, thumbsUpOrDown: String) {
-    private fun onSortWordListSuccess(response:WordsResponse, thumbsUpOrDown: String) {
+    private fun onSortWordListSuccess(response: WordsResponse, thumbsUpOrDown: String) {
         val wordList: List<WordsListItem?> = response.list
         wordListAdapter.sortWordListByThumbsUpOrDown(
             wordList as List<WordsListItem>,
             thumbsUpOrDown
         )
 
-//        WordsListViewState.SUCCESS_STATE.data = response.body()!!
         WordsListViewState.SUCCESS_STATE.data = response
-        wordsListViewState.postValue(WordsListViewState.SUCCESS_STATE)
     }
 
     private fun onRetrieveWordListError(error: Throwable) {

@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.nike.dictionary.ui.viewmodel.LoadDictionaryWordListViewModel" />
+            type="com.nike.dictionary.ui.viewmodel.SearchWordInDictionaryViewModel" />
 
     </data>
 

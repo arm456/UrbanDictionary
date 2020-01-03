@@ -12,14 +12,14 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.nike.dictionary.databinding.ActivityWordsListBinding
-import com.nike.dictionary.ui.viewmodel.LoadDictionaryWordListViewModel
+import com.nike.dictionary.ui.viewmodel.SearchWordInDictionaryViewModel
 import androidx.appcompat.widget.SearchView
 import com.nike.dictionary.R
 
 
 class HomeFragment : Fragment() {
     private lateinit var binding: ActivityWordsListBinding
-    private lateinit var viewModel: LoadDictionaryWordListViewModel
+    private lateinit var viewModel: SearchWordInDictionaryViewModel
     private var errorSnackBar: Snackbar? = null
 
     override fun onCreateView(
@@ -44,13 +44,12 @@ class HomeFragment : Fragment() {
         }
         configureSearchViewForDynamicStringSearch()
 
-        viewModel = ViewModelProviders.of(this).get(LoadDictionaryWordListViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(SearchWordInDictionaryViewModel::class.java)
         viewModel.errorMessage.observe(this, Observer { errorMessage ->
             if (errorMessage != null) showError(errorMessage) else hideError()
         })
         binding.viewModel = viewModel
     }
-
 
     private fun configureSortingByThumbsUpOrDown(isChecked: Boolean) {
 //    Assumed switch isChecked to SortBy Thumbs Up Count and vice versa
